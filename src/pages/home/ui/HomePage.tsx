@@ -42,7 +42,7 @@ export const HomePage = () => {
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                to={'/auth'}
+                to={'/auth/register'}
                 className="p-2 rounded-sm gap-2 bg-white text-black flex items-center hover:bg-slate-100 shadow-lg"
               >
                 Создать профиль <ArrowRight className="h-5 w-5" />

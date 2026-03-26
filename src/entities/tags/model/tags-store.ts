@@ -14,7 +14,6 @@ export const useTagsStore = create<TTagsStore>()(
 
         try {
           const response = await tagsApi.getTags()
-
           set({ tags: response.data })
         } catch (error) {
           console.error('Failed to fetch tags:', error)
@@ -27,6 +26,14 @@ export const useTagsStore = create<TTagsStore>()(
           return
         }
         set({ filterTags: filterTags.filter((name) => name !== tag) })
+      },
+      createNewTag: async (name: string) => {
+        try {
+          const response = await tagsApi.createNewTag(name)
+          set((state) => ({ tags: [...state.tags, response.data] }))
+        } catch (error) {
+          console.error('Failed to create new tag:', error)
+        }
       },
     }),
     { name: 'tags-store' },

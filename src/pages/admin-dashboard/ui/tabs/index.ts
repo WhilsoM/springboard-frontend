@@ -1,0 +1,5 @@
+export { AdminTab } from './AdminTab'
+export { ModerationTab } from './ModerationTab'
+export { TagsTab } from './TagsTab'
+export { UsersTab } from './UsersTab'
+export { VerificationTab } from './VerificationTab'

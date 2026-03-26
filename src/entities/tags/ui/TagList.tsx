@@ -3,11 +3,10 @@ import { useTagsStore } from '../model'
 
 export const TagList = ({ canChoose = false }: { canChoose?: boolean }) => {
   const tags = useTagsStore((state) => state.tags)
-  const filterTags = useTagsStore((state) => state.filterTags) // Get current selected tags
+  const filterTags = useTagsStore((state) => state.filterTags)
   const addToFilterTags = useTagsStore((state) => state.addToFilterTags)
 
   const isSelected = (tagName: string) => filterTags.includes(tagName)
-  console.log(filterTags)
 
   return (
     <div className="flex items-center flex-wrap gap-2">

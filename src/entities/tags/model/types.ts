@@ -8,4 +8,5 @@ export type TTagsStore = {
   filterTags: string[]
   fetchTags: () => Promise<void>
   addToFilterTags: (tag: string) => void
+  createNewTag: (name: string) => Promise<void>
 }
