@@ -1,0 +1,1 @@
+export { FavoriteOpportunitiesPage } from './FavoriteOpportunitiesPage'

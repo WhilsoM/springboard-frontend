@@ -1,4 +1,6 @@
 export { AdminDashboardPage } from './admin-dashboard'
 export { ApplicantDashboardPage } from './applicant-dashboard'
 export { EmployerDashboardPage } from './employer-dashboard'
+export { FindApplicantsPage } from './find-applicants'
 export { HomePage } from './home'
+export { OpportunityDetailedPage } from './opportunity-detailed'

@@ -1,5 +1,6 @@
-import { Button, cn } from '@/shared'
-import { Building2, ChevronRight, Star } from 'lucide-react'
+import { AddToFavorite } from '@/features/favorites'
+import { Button } from '@/shared'
+import { Building2, ChevronRight } from 'lucide-react'
 import { memo } from 'react'
 import type { IOpportunity } from '../model'
 
@@ -15,13 +16,7 @@ export const OpportunityItem = memo(({ job }: { job: IOpportunity }) => {
             <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
               {job.title}
             </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-slate-300 hover:text-amber-400 transition-colors bg-slate-50 hover:bg-amber-50 p-2 rounded-full"
-            >
-              <Star className={cn('h-4 w-4')} />
-            </Button>
+            <AddToFavorite opportunity={job} />
           </div>
 
           <div className="flex items-center gap-1.5 mt-2 text-slate-600 text-sm font-medium">

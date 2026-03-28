@@ -1,7 +1,9 @@
+import { useOpportunityStore } from '@/entities/opportunity'
 import {
   Button,
   Calendar,
   Input,
+  Label,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -22,6 +24,7 @@ import { LocationPicker } from './LocationPicker'
 
 export const EmployerCreateOpportunity = () => {
   const navigate = useNavigate()
+  const createOpportunity = useOpportunityStore((s) => s.createOpportunity)
 
   const {
     register,
@@ -58,8 +61,7 @@ export const EmployerCreateOpportunity = () => {
   }
 
   const onSubmit = async (data: CreateOpportunityValues) => {
-    console.log(data)
-
+    createOpportunity(data)
     navigate('/dashboard/employer')
   }
 
@@ -68,12 +70,13 @@ export const EmployerCreateOpportunity = () => {
       <div className="mx-auto max-w-5xl space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <button
+            <Button
+              variant={'ghost'}
               onClick={() => navigate(-1)}
               className="flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors text-sm font-bold tracking-widest"
             >
               <ArrowLeft size={16} /> НАЗАД
-            </button>
+            </Button>
             <h1 className="text-4xl font-black tracking-tight text-slate-900">Создание вакансии</h1>
           </div>
           <Button
@@ -89,9 +92,9 @@ export const EmployerCreateOpportunity = () => {
           <div className="lg:col-span-2 space-y-8">
             <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Название
-                </label>
+                </Label>
                 <Input
                   {...register('title')}
                   placeholder="Напр. Senior Go Developer"
@@ -107,9 +110,9 @@ export const EmployerCreateOpportunity = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Описание
-                </label>
+                </Label>
                 <textarea
                   {...register('description')}
                   rows={6}
@@ -128,9 +131,9 @@ export const EmployerCreateOpportunity = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <Label className="text-xs font-black text-slate-400 uppercase tracking-widest">
                   Стек
-                </label>
+                </Label>
                 <div className="flex flex-wrap gap-2 p-4 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50/30">
                   {tags.map((tag) => (
                     <span
@@ -211,9 +214,9 @@ export const EmployerCreateOpportunity = () => {
               {watch('format') !== 'remote' && (
                 <div className="space-y-3 pt-4 border-t border-slate-100">
                   <div className="flex justify-between items-end">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       Точный адрес на карте
-                    </label>
+                    </Label>
                     <span className="text-[10px] text-slate-400 font-mono">
                       {watch('latitude')?.toFixed(4)}, {watch('longitude')?.toFixed(4)}
                     </span>
@@ -313,7 +316,7 @@ export const EmployerCreateOpportunity = () => {
                         locale={ru}
                         selected={field.value ? new Date(field.value) : undefined}
                         onSelect={(date) => field.onChange(date?.toISOString())}
-                        initialFocus
+                        autoFocus
                       />
                     </PopoverContent>
                   </Popover>

@@ -14,6 +14,8 @@ export const useTagsStore = create<TTagsStore>()(
 
         try {
           const response = await tagsApi.getTags()
+          console.log(response)
+
           set({ tags: response.data })
         } catch (error) {
           console.error('Failed to fetch tags:', error)

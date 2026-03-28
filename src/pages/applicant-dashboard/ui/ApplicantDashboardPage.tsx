@@ -3,7 +3,6 @@ import { Link } from 'react-router'
 import { ApplicantInfo } from './ApplicantInfo'
 import { ApplicantNetworking } from './ApplicantNetworking'
 import { ApplicantPrivacy } from './ApplicantPrivacy'
-import { Applications } from './Applications'
 
 export const ApplicantDashboardPage = () => {
   return (
@@ -19,7 +18,6 @@ export const ApplicantDashboardPage = () => {
           </div>
 
           <div className="space-y-6 lg:col-span-8">
-            <Applications />
             <ApplicantNetworking />
           </div>
         </div>

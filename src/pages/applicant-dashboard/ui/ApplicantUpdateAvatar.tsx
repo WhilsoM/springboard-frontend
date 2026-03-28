@@ -23,10 +23,16 @@ export const ApplicantUpdateAvatar = ({
   const updateUserAvatar = useUserStore((state) => state.updateAvatarUserMe)
   const [avatarURL, setAvatarURL] = useState('')
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    await updateUserAvatar(avatarURL)
+    try {
+      await updateUserAvatar(avatarURL)
+    } catch (error) {
+      console.error('Ошибка при обновлении аватара:', error)
+    } finally {
+      setIsDialogOpen(false)
+    }
   }
 
   return (

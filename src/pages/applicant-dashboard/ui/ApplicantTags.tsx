@@ -42,7 +42,7 @@ export const ApplicantTags = () => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-1 text-sm font-medium text-slate-700">Skills</label>
+        <Label className="mb-1 text-sm font-medium text-slate-700">Skills</Label>
         <div className="flex flex-wrap gap-2 mt-2">
           {skills.map((skill, index) => (
             <p key={index} className="bg-slate-200 text-slate-800 px-2 py-1 rounded-md text-sm">

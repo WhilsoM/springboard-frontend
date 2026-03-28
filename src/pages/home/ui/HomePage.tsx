@@ -1,3 +1,4 @@
+import { useOpportunityStore, type TOpportunityParams } from '@/entities/opportunity'
 import { Button, cn, Input } from '@/shared'
 import { ArrowRight } from 'lucide-react'
 import { lazy, Suspense, useState } from 'react'
@@ -10,6 +11,24 @@ const MapView = lazy(() => import('./MapView').then((module) => ({ default: modu
 export const HomePage = () => {
   const [viewMode, setViewMode] = useState<'map' | 'list'>('list')
 
+  const [filters, setFilters] = useState<TOpportunityParams>({
+    search: '',
+    tags: [],
+    type: '',
+    format: '',
+  })
+
+  const updateFilters = (newFilters: Partial<TOpportunityParams>) => {
+    const updated = { ...filters, ...newFilters }
+    setFilters(updated)
+    getAllOpportunities(updated)
+  }
+
+  const getAllOpportunities = useOpportunityStore((s) => s.getAllOpportunities)
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({ search: e.target.value })
+  }
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <section className="relative overflow-hidden bg-slate-900 pt-16 pb-32 lg:pt-24 lg:pb-40">
@@ -79,7 +98,11 @@ export const HomePage = () => {
         <div className="p-4 md:p-6 shadow-xl border-slate-200/60 bg-white/95 backdrop-blur-xl">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
             <div className="flex-1 relative">
-              <Input placeholder="Название компании, город..." className="h-12 text-lg shadow-sm" />
+              <Input
+                onChange={handleSearch}
+                placeholder="Название компании, город..."
+                className="h-12 text-lg shadow-sm"
+              />
             </div>
 
             <div className="flex items-center gap-2 rounded-lg bg-slate-100/80 p-1 shadow-inner h-12 w-full lg:w-auto">
@@ -109,7 +132,7 @@ export const HomePage = () => {
               </Button>
             </div>
           </div>
-          <FilterBar />
+          <FilterBar filters={filters} onChange={updateFilters} />
         </div>
       </section>
 

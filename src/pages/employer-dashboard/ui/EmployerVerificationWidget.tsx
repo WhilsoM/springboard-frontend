@@ -1,9 +1,12 @@
-import { Button, Input } from '@/shared'
+import { useUserStore, type IUserMeEmployerResponse } from '@/entities/user'
+import { Button, cn, Input } from '@/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { companyVerificationSchema, type CompanyVerificationValues } from '../model'
 
 export const EmployerVerificationWidget = () => {
+  const user = useUserStore((s) => s.user) as IUserMeEmployerResponse
+  const verifyMe = useUserStore((s) => s.verifyEmployerMe)
   const {
     register: registerVerify,
     handleSubmit: handleVerifySubmit,
@@ -15,25 +18,36 @@ export const EmployerVerificationWidget = () => {
     },
   })
 
+  console.log(user)
+
   const onVerifySubmit = (data: CompanyVerificationValues) => {
-    console.log('Submitting INN:', data.inn)
+    if (!user || user.role !== 'employer') return
+    verifyMe(data.inn, user.company_name)
   }
 
   return (
     <div className="bg-slate-900 rounded-[32px] p-8 text-white shadow-xl shadow-slate-200">
       <div className="flex justify-between items-start mb-6">
         <h3 className="text-xl font-bold">Верификация</h3>
-        <p className="bg-amber-400/10 text-amber-400 border-amber-400/20 p-1 rounded-sm">
-          В ожидании
+        <p
+          className={cn(
+            'bg-amber-400/10  border-amber-400/20 p-1 rounded-sm',
+            user.is_verified ? 'text-green-300' : 'text-amber-400',
+          )}
+        >
+          {user.is_verified ? 'Верифицирован' : 'В ожидании'}
         </p>
       </div>
       <p className="text-slate-400 text-sm leading-relaxed mb-6">
-        Подтвердите данные ИНН, чтобы получить статус проверенного работодателя.
+        {user.is_verified
+          ? 'Вы проверенный работодатель!'
+          : 'Подтвердите данные ИНН, чтобы получить статус проверенного работодателя.'}
       </p>
 
       <form onSubmit={handleVerifySubmit(onVerifySubmit)} className="space-y-4">
         <div>
           <Input
+            disabled={user.is_verified}
             {...registerVerify('inn')}
             placeholder="Ваш ИНН (10 или 12 цифр)"
             className={`h-12 rounded-xl transition-all ${
@@ -49,6 +63,7 @@ export const EmployerVerificationWidget = () => {
         </div>
 
         <Button
+          disabled={user.is_verified}
           type="submit"
           className="w-full h-12 rounded-xl font-bold bg-white text-slate-900 hover:bg-slate-100 transition-transform active:scale-95"
         >

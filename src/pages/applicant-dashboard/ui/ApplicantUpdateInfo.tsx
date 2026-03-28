@@ -1,4 +1,4 @@
-import { useUserStore, type IUserMeApplicantResponse, type IUserMeResponse } from '@/entities/user'
+import { useUserStore, type IUserMeApplicantResponse } from '@/entities/user'
 import {
   Button,
   Dialog,
@@ -63,15 +63,19 @@ export const ApplicantUpdateInfo = ({
     if (!user) return
 
     try {
-      const baseUserData = {
-        email: user.email,
-        display_name: user.display_name,
+      const payload: Omit<IUserMeApplicantResponse, 'id' | 'role' | 'updated_at'> = {
+        email: data.email,
+        display_name: data.display_name,
+        university: data.university ?? '',
+        course: data.course ?? 1,
+        portfolio_url: data.portfolio_url ?? '',
+        github_url: data.github_url ?? '',
         is_private: user.is_private,
+        skills: user.skills || [],
+        avatar_url: user.avatar_url || '',
       }
-      await updateUserMe({
-        ...baseUserData,
-        ...data,
-      } as Omit<IUserMeResponse, 'role' | 'id'>)
+
+      await updateUserMe(payload)
 
       setIsDialogOpen(false)
     } catch (e) {

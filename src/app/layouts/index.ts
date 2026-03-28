@@ -1,3 +1,5 @@
 export { AuthLayout } from './AuthLayout'
 export { DashboardLayout } from './DashboardLayout'
 export { MainLayout } from './MainLayout'
+export { PrivateRoute } from './PrivateRoute'
+export { PublicRoute } from './PublicRoute'

@@ -1,100 +1,108 @@
+import { useUserStore, type IUserMeApplicantResponse } from '@/entities/user'
 import { Button } from '@/shared'
-import { Check, Share2, X } from 'lucide-react'
+import { Check, X } from 'lucide-react'
+import { useEffect } from 'react'
 
-const CONNECTIONS = [
-  {
-    id: 1,
-    name: 'Elena Smirnova',
-    role: 'HR Manager',
-    company: 'Yandex',
-    status: 'pending',
-    avatar: 'https://i.pravatar.cc/150?u=4',
-  },
-  {
-    id: 2,
-    name: 'Alexey Popov',
-    role: 'Senior Dev',
-    company: 'SberTech',
-    status: 'connected',
-    avatar: 'https://i.pravatar.cc/150?u=5',
-  },
-]
+interface IContactWithStatus extends IUserMeApplicantResponse {
+  status?: 'pending' | 'accepted' | 'rejected'
+}
+
 export const ApplicantNetworking = () => {
+  const contacts = useUserStore((s) => s.contacts) as IContactWithStatus[]
+  const getContacts = useUserStore((s) => s.getContacts)
+  const handleRequest = useUserStore((s) => s.handleRequest)
+
+  useEffect(() => {
+    getContacts()
+  }, [getContacts])
+
+  const pendingRequests = contacts.filter((c) => c.status === 'pending')
+  const connectedContacts = contacts.filter((c) => c.status === 'accepted' || !c.status)
+
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      <div className="flex flex-col h-full">
-        <div className="border-b border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900">Connection Requests</h3>
+      <div className="flex flex-col h-full bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-200 p-5 bg-slate-50/50">
+          <h3 className="font-bold text-slate-900">Запросы</h3>
         </div>
-        <div className="flex-1 divide-y divide-slate-100 p-2">
-          {CONNECTIONS.filter((c) => c.status === 'pending').map((req) => (
-            <div key={req.id} className="flex flex-col gap-3 p-4 bg-slate-50/50 rounded-lg">
+        <div className="flex-1 divide-y divide-slate-100 p-2 overflow-y-auto max-h-100">
+          {pendingRequests.map((req) => (
+            <div key={req.id} className="flex flex-col gap-3 p-4">
               <div className="flex items-center gap-3">
-                <img src={req.avatar} alt={req.name} className="h-8 w-8 rounded-full" />
+                {req.avatar_url ? (
+                  <img
+                    src={req.avatar_url}
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full object-cover bg-gray-200"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gray-200" />
+                )}
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{req.name}</p>
-                  <p className="text-xs text-slate-500">
-                    {req.role} at {req.company}
-                  </p>
+                  <p className="text-sm font-bold text-slate-900">{req.display_name}</p>
+                  <p className="text-xs text-slate-500">{req.university || 'Студент'}</p>
                 </div>
               </div>
-              <div className="flex gap-2 w-full mt-2">
-                <Button size="sm" className="flex-1 gap-1 py-1 h-8">
-                  <Check className="h-3.5 w-3.5" /> Accept
+              <div className="flex gap-2 w-full">
+                <Button
+                  onClick={() => handleRequest(req.id, 'accepted')}
+                  size="sm"
+                  className="flex-1 h-9 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Check size={14} className="mr-1" /> Принять
                 </Button>
                 <Button
+                  onClick={() => handleRequest(req.id, 'rejected')}
                   variant="outline"
                   size="sm"
-                  className="flex-1 gap-1 py-1 h-8 text-slate-600 hover:text-rose-600 hover:border-rose-200"
+                  className="flex-1 h-9 text-slate-600 hover:text-rose-600 hover:border-rose-200"
                 >
-                  <X className="h-3.5 w-3.5" /> Ignore
+                  <X size={14} className="mr-1" /> Отклонить
                 </Button>
               </div>
             </div>
           ))}
-          {CONNECTIONS.filter((c) => c.status === 'pending').length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No new requests.</div>
+          {pendingRequests.length === 0 && (
+            <div className="p-10 text-center text-slate-400 text-sm italic">Нет новых запросов</div>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col h-full">
-        <div className="border-b border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900 flex items-center justify-between">
-            Your Contacts{' '}
-            <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-              124
+      <div className="flex flex-col h-full bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-200 p-5 bg-slate-50/50">
+          <h3 className="font-bold text-slate-900 flex items-center justify-between">
+            Мои контакты
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+              {connectedContacts.length}
             </span>
           </h3>
         </div>
-        <div className="flex-1 divide-y divide-slate-100 p-2">
-          {CONNECTIONS.filter((c) => c.status === 'connected').map((contact) => (
+        <div className="flex-1 divide-y divide-slate-100 p-2 overflow-y-auto max-h-100">
+          {connectedContacts.map((contact) => (
             <div
               key={contact.id}
-              className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-lg transition-colors"
+              className="flex items-center justify-between p-4 hover:bg-slate-50 transition-all rounded-xl mx-1"
             >
               <div className="flex items-center gap-3">
-                <img src={contact.avatar} alt={contact.name} className="h-8 w-8 rounded-full" />
+                {contact.avatar_url ? (
+                  <img
+                    src={contact.avatar_url}
+                    alt="avatar"
+                    className="w-12 h-12 rounded-full object-cover bg-gray-200"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gray-200" />
+                )}
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{contact.name}</p>
-                  <p className="text-xs text-slate-500">{contact.role}</p>
+                  <p className="text-sm font-bold text-slate-900">{contact.display_name}</p>
+                  <p className="text-xs text-slate-500">{contact.university || 'Студент'}</p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-blue-600 h-8 px-2"
-                title="Recommend Job"
-              >
-                <Share2 className="h-4 w-4" />
-              </Button>
             </div>
           ))}
-        </div>
-        <div className="border-t border-slate-100 p-3 text-center">
-          <Button className="text-sm text-blue-600 font-medium hover:underline">
-            View all contacts
-          </Button>
+          {connectedContacts.length === 0 && (
+            <div className="p-10 text-center text-slate-400 text-sm">Список контактов пуст</div>
+          )}
         </div>
       </div>
     </div>

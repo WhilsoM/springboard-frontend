@@ -3,12 +3,16 @@ import { GraduationCap } from 'lucide-react'
 import { Link } from 'react-router'
 
 export const Header = () => {
-  const userRole = useUserStore((state) => state.user?.role)
-  const haveTokens =
-    !!localStorage.getItem('access_token') || !!localStorage.getItem('refresh_token')
+  const user = useUserStore((s) => s.user)
+  const isLoading = useUserStore((s) => s.isLoading)
+  const haveTokens = !!localStorage.getItem('access_token')
 
-  // TODO: add curator role check
-  const url = userRole === 'applicant' ? '/dashboard/applicant' : '/dashboard/employer'
+  const url =
+    user?.role === 'applicant'
+      ? '/dashboard/applicant'
+      : user?.role === 'curator'
+        ? '/dashboard/admin'
+        : '/dashboard/employer'
 
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm">
@@ -18,7 +22,11 @@ export const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        {haveTokens ? (
+        <Link to={'/favorite-opportunities'}>Понравившиеся вакансии</Link>
+        <Link to={'/applicants'}>Соискатели</Link>
+        {isLoading && haveTokens ? (
+          <div className="animate-pulse bg-slate-200 h-10 w-32 rounded-md" />
+        ) : haveTokens && user ? (
           <Link
             to={url}
             className="bg-blue-200 hover:bg-transparent hover:border-blue-200 text-blue-700 py-2 px-4 rounded-md transition-colors duration-200"

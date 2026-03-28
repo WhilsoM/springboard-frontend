@@ -1,5 +1,5 @@
 import { useUserStore } from '@/entities/user'
-import { Button, Input } from '@/shared'
+import { Button, Input, Label } from '@/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -59,7 +59,7 @@ export const LoginPage = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">Почта</label>
+              <Label className="mb-1.5 block text-sm font-medium text-slate-700">Почта</Label>
               <Input
                 {...register('email')}
                 type="email"
@@ -71,7 +71,7 @@ export const LoginPage = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-medium text-slate-700">Пароль</label>
+                <Label className="text-sm font-medium text-slate-700">Пароль</Label>
               </div>
               <Input
                 {...register('password')}

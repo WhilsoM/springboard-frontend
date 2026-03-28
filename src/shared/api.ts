@@ -1,9 +1,13 @@
 import axios from 'axios'
+import qs from 'qs'
 
 export const apiInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
   headers: {
     'Content-Type': 'application/json',
+  },
+  paramsSerializer: {
+    serialize: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
   },
 })
 
@@ -39,7 +43,7 @@ apiInstance.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
-        window.location.href = '/login'
+        window.location.href = '/auth/login'
         return Promise.reject(refreshError)
       }
     }

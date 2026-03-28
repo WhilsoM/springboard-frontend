@@ -1,8 +1,8 @@
-import { useUserStore } from '@/entities/user'
+import { useUserStore, type IUserMeApplicantResponse } from '@/entities/user'
 import { Button } from '@/shared'
 import { Camera, GithubIcon, Globe, GraduationCap } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { ApplicantTags } from './ApplicantTags'
 import { ApplicantUpdateAvatar } from './ApplicantUpdateAvatar'
 import { ApplicantUpdateInfo } from './ApplicantUpdateInfo'
@@ -11,19 +11,33 @@ export const ApplicantInfo = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isAvatarUpdateOpen, setIsAvatarUpdateOpen] = useState(false)
 
-  const user = useUserStore((s) => s.user)
+  const navigate = useNavigate()
+  const logout = useUserStore((s) => s.logout)
+  const deleteUserAccount = useUserStore((s) => s.deleteUserMe)
 
-  if (user?.role !== 'applicant') return
+  const user = useUserStore((s) => s.user) as IUserMeApplicantResponse
+  const isLoading = useUserStore((s) => s.isLoading)
+
+  if (isLoading && !user) return <div className="p-6 animate-pulse">Загрузка профиля...</div>
+
+  if (!isLoading && !user) return <div className="p-6">Войдите в аккаунт</div>
+
+  if (user && user.role !== 'applicant') return null
 
   return (
     <div className="p-6">
       <div className="mb-6 flex flex-col items-center">
         <div className="relative">
-          <img
-            src={user?.avatar_url}
-            alt="user avatar"
-            className="h-28 w-28 border-4 border-white shadow-sm"
-          />
+          {user?.avatar_url ? (
+            <img
+              src={user?.avatar_url}
+              alt="user avatar"
+              className="h-28 w-28 rounded-full border-4 border-white shadow-sm"
+            />
+          ) : (
+            <div className="h-28 w-28 rounded-full bg-slate-200 border-4 border-white shadow-sm" />
+          )}
+
           <Button
             onClick={() => setIsAvatarUpdateOpen(true)}
             className="absolute bottom-0 right-0 rounded-full bg-blue-600 p-2 text-white shadow-md hover:bg-blue-700"
@@ -70,6 +84,29 @@ export const ApplicantInfo = () => {
 
       <Button onClick={() => setIsDialogOpen(true)} className="w-full">
         Update Profile
+      </Button>
+
+      <Button
+        variant="default"
+        className="text-white w-full h-12 rounded-xl font-bold bg-red-500  hover:bg-red-600"
+        onClick={() => {
+          logout()
+          navigate('/')
+        }}
+      >
+        Выйти из аккаунта
+      </Button>
+
+      <Button
+        variant="default"
+        className="text-white w-full h-12 rounded-xl font-bold bg-red-500  hover:bg-red-600"
+        onClick={() => {
+          deleteUserAccount()
+          logout()
+          navigate('/')
+        }}
+      >
+        Удалить аккаунт
       </Button>
 
       <ApplicantUpdateInfo isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />

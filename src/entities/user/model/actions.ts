@@ -3,8 +3,8 @@ import {
   useUserStore,
   type ILoginRequest,
   type IRegisterRequest,
+  type IUserMeApplicantResponse,
   type IUserMeEmployerResponse,
-  type IUserMeResponse,
 } from '../model'
 
 export const loginAction = async (userData: ILoginRequest) => {
@@ -54,11 +54,21 @@ export const getUserMeAction = async () => {
   }
 }
 
-export const updateUserMeAction = async (userData: Omit<IUserMeResponse, 'role' | 'id'>) => {
+export const updateUserMeAction = async (
+  userData:
+    | Omit<IUserMeEmployerResponse, 'id' | 'role' | 'updated_at'>
+    | Omit<IUserMeApplicantResponse, 'id' | 'role' | 'updated_at'>,
+) => {
+  const store = useUserStore.getState()
   useUserStore.setState({ isLoading: true })
+  console.log('updateUserMeAction', userData)
+
   try {
     const { data } = await userApi.updateUserMe(userData)
-    useUserStore.setState({ user: data })
+    useUserStore.setState({
+      user: store.user ? { ...store.user, ...data } : data,
+    })
+    console.log('FROM BACKEND', data)
   } catch (error) {
     console.error('Failed to update user data:', error)
   } finally {
@@ -80,14 +90,15 @@ export const deleteUserMeAction = async () => {
   }
 }
 
-export const verifyEmployerMeAction = async (inn: string) => {
+export const verifyEmployerMeAction = async (inn: string, companyName: string) => {
   const store = useUserStore.getState()
 
   useUserStore.setState({ isLoading: true })
   try {
-    await userApi.verifyEmployerMe(inn)
+    await userApi.verifyEmployerMe(inn, companyName)
 
     useUserStore.setState({ user: { ...store.user, inn } as IUserMeEmployerResponse })
+    await useUserStore.getState().getUserMe()
   } catch (error) {
     console.error('Failed to verify employer:', error)
   } finally {
@@ -111,11 +122,17 @@ export const updateIsPrivateUserMeAction = async (isPrivate: boolean) => {
 
 export const updateAvatarUserMeAction = async (avatarUrl: string) => {
   const store = useUserStore.getState()
-
   useUserStore.setState({ isLoading: true })
+
+  if (store.user?.role === 'curator') return
+
   try {
     await userApi.updateAvatarUserMe(avatarUrl)
-    await store.getUserMe()
+    if (store.user) {
+      useUserStore.setState({
+        user: { ...store.user, avatar_url: avatarUrl },
+      })
+    }
   } catch (error) {
     console.error('Failed to update user avatar:', error)
   } finally {
@@ -124,7 +141,42 @@ export const updateAvatarUserMeAction = async (avatarUrl: string) => {
 }
 
 export const logoutAction = () => {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
+  localStorage.clear()
   useUserStore.setState({ user: null })
+}
+
+export const getContactsAction = async () => {
+  try {
+    const { data } = await userApi.getContacts()
+    useUserStore.setState({ contacts: data.contacts })
+  } catch (e) {
+    console.error('Ошибка при получении контактов', e)
+  }
+}
+
+export const sendRequestAction = async (receiverId: string) => {
+  try {
+    await userApi.sendNetworkRequest(receiverId)
+  } catch (e) {
+    console.error('Ошибка при отправке запроса', e)
+  }
+}
+
+export const handleRequestAction = async (requestId: string, status: 'accepted' | 'rejected') => {
+  try {
+    await userApi.handleNetworkRequest(requestId, status)
+    await getContactsAction()
+  } catch (e) {
+    console.error('Ошибка при обработке запроса', e)
+  }
+}
+
+export const searchApplicantsAction = async (q: string) => {
+  try {
+    const { data } = await userApi.searchApplicants(q)
+    return data.applicants
+  } catch (e) {
+    console.error('Search failed', e)
+    return []
+  }
 }

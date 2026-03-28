@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from 'react'
 
 export interface OpportunityCardProps {
+  id: string
   title: string
-  status: string
-  applications: number
+  status: boolean
   posted: string
 }
 

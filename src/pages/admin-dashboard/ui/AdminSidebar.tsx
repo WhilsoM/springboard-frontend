@@ -1,9 +1,13 @@
+import { useUserStore } from '@/entities/user'
 import { Button, cn } from '@/shared'
 import { ArrowLeft, ShieldCheck } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { SIDEBAR_TABS, type IAdminSidebarProps } from '../model'
 
 export const AdminSidebar = ({ activeTab, setActiveTab }: IAdminSidebarProps) => {
+  const navigate = useNavigate()
+  const logout = useUserStore((s) => s.logout)
+
   return (
     <aside className="w-64 shrink-0 border-r border-slate-200 bg-white">
       <div className="flex h-16 items-center border-b border-slate-200 px-6 mb-3">
@@ -31,6 +35,17 @@ export const AdminSidebar = ({ activeTab, setActiveTab }: IAdminSidebarProps) =>
             {tab.text}
           </Button>
         ))}
+
+        <Button
+          variant="default"
+          className="text-white w-full  rounded-xl font-bold bg-red-500  hover:bg-red-600 mt-5!"
+          onClick={() => {
+            logout()
+            navigate('/')
+          }}
+        >
+          Выйти из аккаунта
+        </Button>
       </nav>
     </aside>
   )

@@ -1,5 +1,5 @@
 import { useUserStore, type IRegisterRequest } from '@/entities/user'
-import { Button, Input } from '@/shared'
+import { Button, Input, Label } from '@/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -80,9 +80,9 @@ export const RegisterPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                <Label className="mb-1.5 block text-sm font-medium text-slate-700">
                   Отображаемое имя
-                </label>
+                </Label>
                 <Input
                   {...register('displayName')}
                   placeholder="Иванов Иван"
@@ -94,7 +94,7 @@ export const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Почта</label>
+                <Label className="mb-1.5 block text-sm font-medium text-slate-700">Почта</Label>
                 <Input
                   {...register('email')}
                   type="email"
@@ -107,7 +107,7 @@ export const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700">Пароль</label>
+                <Label className="mb-1.5 block text-sm font-medium text-slate-700">Пароль</Label>
                 <Input
                   {...register('password')}
                   type="password"
@@ -120,9 +120,9 @@ export const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Я — ...</label>
+                <Label className="mb-2 block text-sm font-medium text-slate-700">Я — ...</Label>
                 <div className="grid grid-cols-2 gap-3">
-                  <label
+                  <Label
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 text-sm font-medium transition-all ${
                       selectedRole === 'applicant'
                         ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
@@ -136,8 +136,8 @@ export const RegisterPage = () => {
                       className="sr-only"
                     />
                     Соискатель
-                  </label>
-                  <label
+                  </Label>
+                  <Label
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 text-sm font-medium transition-all ${
                       selectedRole === 'employer'
                         ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
@@ -151,7 +151,7 @@ export const RegisterPage = () => {
                       className="sr-only"
                     />
                     Работодатель
-                  </label>
+                  </Label>
                 </div>
                 {errors.role && <p className="mt-1 text-xs text-red-500">{errors.role.message}</p>}
               </div>

@@ -1,9 +1,10 @@
+import { userApi } from '@/entities/user/api'
 import { Button } from '@/shared'
 import { Badge, Ban, Edit, Flag } from 'lucide-react'
 
 const MODERATION_FEED = [
   {
-    id: 101,
+    id: 'opp-101',
     title: 'Senior Backend Engineer (Crypto)',
     company: 'Unknown LLC',
     date: '2 hrs ago',
@@ -11,7 +12,7 @@ const MODERATION_FEED = [
     flags: 2,
   },
   {
-    id: 102,
+    id: 'opp-102',
     title: 'Intern Designer (Unpaid)',
     company: 'DesignStudio',
     date: '5 hrs ago',
@@ -21,16 +22,28 @@ const MODERATION_FEED = [
 ]
 
 export const ModerationTab = () => {
+  const handleDeletePost = async (id: string) => {
+    if (!confirm('Вы уверены, что хотите удалить этот пост?')) return
+
+    try {
+      await userApi.deleteOpportunity(id)
+      alert('Пост успешно удален администратором')
+    } catch (error) {
+      console.error('Ошибка при удалении:', error)
+      alert('Не удалось удалить пост')
+    }
+  }
+
   return (
     <div className="space-y-4">
       {MODERATION_FEED.map((post) => (
-        <div key={post.id} className="p-6">
+        <div key={post.id} className="p-6 bg-white rounded-xl shadow-sm border border-slate-100">
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-lg font-semibold text-slate-900">{post.title}</h3>
                 {post.flags > 0 && (
-                  <Badge className="gap-1">
+                  <Badge className="gap-1 bg-amber-100 text-amber-800 hover:bg-amber-100 border-0">
                     <Flag className="h-3 w-3" /> {post.flags} Reports
                   </Badge>
                 )}
@@ -44,7 +57,7 @@ export const ModerationTab = () => {
 
           <div className="rounded-lg bg-slate-50 p-4 mb-4 border border-slate-100">
             <p className="text-sm text-slate-700 line-clamp-2">{post.content}</p>
-            <Button className="text-blue-600 text-sm font-medium mt-2 hover:underline">
+            <Button variant="link" className="text-blue-600 text-sm font-medium mt-2 p-0 h-auto">
               View full text
             </Button>
           </div>
@@ -66,6 +79,7 @@ export const ModerationTab = () => {
               <Flag className="h-4 w-4" /> Warn User
             </Button>
             <Button
+              onClick={() => handleDeletePost(post.id)}
               variant="outline"
               size="sm"
               className="gap-2 border-rose-200 text-rose-700 hover:bg-rose-50"

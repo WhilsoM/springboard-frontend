@@ -1,3 +1,5 @@
+import type { TOpportunityParams } from '@/entities/opportunity'
+
 export interface IOpportunity {
   id: string
   employer_id: string
@@ -18,4 +20,9 @@ export interface IOpportunity {
   format: string
   expires_at: string
   created_at: string
+}
+
+export interface IFilterBarProps {
+  filters: TOpportunityParams
+  onChange: (filters: Partial<TOpportunityParams>) => void
 }

@@ -1,8 +1,9 @@
+import { FindApplicantsPage } from '@/pages'
+import { FavoriteOpportunitiesPage } from '@/pages/favorite-opportunities/ui/FavoriteOpportunitiesPage'
+import { RoleRoute } from '@/shared'
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router'
-import { AuthLayout, DashboardLayout, MainLayout } from '../layouts'
-import { PrivateRoute } from '../layouts/PrivateRoute'
-import { PublicRoute } from '../layouts/PublicRoute'
+import { AuthLayout, DashboardLayout, MainLayout, PrivateRoute, PublicRoute } from '../layouts'
 
 const EmployerDashboardPage = lazy(() =>
   import('@/pages/employer-dashboard/ui/EmployerDashboardPage').then((module) => ({
@@ -45,6 +46,12 @@ const EmployerCreateOpportunity = lazy(() =>
   })),
 )
 
+const OpportunityDetailedPage = lazy(() =>
+  import('@/pages/opportunity-detailed/ui/OpportunityDetailedPage').then((module) => ({
+    default: module.OpportunityDetailedPage,
+  })),
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -53,6 +60,23 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: 'favorite-opportunities',
+        element: <FavoriteOpportunitiesPage />,
+      },
+      {
+        path: 'opportunity/:id',
+        element: <OpportunityDetailedPage />,
+      },
+      {
+        path: 'applicants',
+        element: <FindApplicantsPage />,
+      },
+      {
+        path: 'applicants/:id',
+        // todo: add applicant detailed page
+        // element: <FindApplicantsPage />,
       },
     ],
   },
@@ -64,27 +88,36 @@ export const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           {
-            path: 'employer',
+            element: <RoleRoute allowedRole="employer" />,
             children: [
-              { index: true, element: <EmployerDashboardPage /> },
               {
-                path: 'create',
-                element: <EmployerCreateOpportunity />,
-              },
-              {
-                path: 'edit/:id',
-                element: <EmployerUpdateOpportunityById />,
+                path: 'employer',
+                children: [
+                  { index: true, element: <EmployerDashboardPage /> },
+                  {
+                    path: 'create',
+                    element: <EmployerCreateOpportunity />,
+                  },
+                  {
+                    path: 'edit/:id',
+                    element: <EmployerUpdateOpportunityById />,
+                  },
+                ],
               },
             ],
           },
           {
-            path: 'applicant',
-            element: <ApplicantDashboardPage />,
+            element: <RoleRoute allowedRole="applicant" />,
+            children: [{ path: 'applicant', element: <ApplicantDashboardPage /> }],
           },
           {
-            path: 'admin',
-            children: [],
-            element: <AdminDashboardPage />,
+            element: <RoleRoute allowedRole="curator" />,
+            children: [
+              {
+                path: 'admin',
+                element: <AdminDashboardPage />,
+              },
+            ],
           },
         ],
       },

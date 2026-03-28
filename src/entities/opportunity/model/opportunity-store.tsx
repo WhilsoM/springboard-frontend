@@ -1,16 +1,48 @@
 import { create } from 'zustand'
-import { opportunityApi } from '../api'
-import type { TOpportunityStore } from './types'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import {
+  createOpportunityAction,
+  deleteOpportunityByIdAction,
+  getAllOpportunitiesAction,
+  getOpportunitiesByEmployerAction,
+  getOpportunityByIdAction,
+  updateOpportunityByIdAction,
+} from './actions'
+import type { IOpportunity, TOpportunityStore } from './types'
 
-export const useOpportunityStore = create<TOpportunityStore>((set) => ({
-  opportunities: [],
+export const useOpportunityStore = create<TOpportunityStore>()(
+  persist(
+    (set) => ({
+      opportunities: [],
+      opportunitiesEmployer: [],
+      favoriteOpportunities: [],
+      isLoading: false,
 
-  fetchOpportunities: async (params) => {
-    try {
-      const response = await opportunityApi.getOpportunities(params)
-      set({ opportunities: response.data.opportunities })
-    } catch (error) {
-      console.error('Failed to fetch opportunities:', error)
-    }
-  },
-}))
+      addToFavorite: (item: IOpportunity) =>
+        set((state) => ({
+          favoriteOpportunities: state.favoriteOpportunities.some((f) => f.id === item.id)
+            ? state.favoriteOpportunities
+            : [...state.favoriteOpportunities, item],
+        })),
+
+      deleteFromFavorite: (id: string) =>
+        set((state) => ({
+          favoriteOpportunities: state.favoriteOpportunities.filter((fav) => fav.id !== id),
+        })),
+
+      getAllOpportunities: getAllOpportunitiesAction,
+      getOpportunitiesByEmployer: getOpportunitiesByEmployerAction,
+      getOpportunityById: getOpportunityByIdAction,
+      createOpportunity: createOpportunityAction,
+      deleteOpportunityById: deleteOpportunityByIdAction,
+      updateOpportunityById: updateOpportunityByIdAction,
+    }),
+    {
+      name: 'opportunity-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        favoriteOpportunities: state.favoriteOpportunities,
+      }),
+    },
+  ),
+)

@@ -1,20 +1,26 @@
-import { useUserStore } from '@/entities/user'
-import { Button, Input } from '@/shared'
+import { useOpportunityStore } from '@/entities/opportunity'
+import { useUserStore, type IUserMeEmployerResponse } from '@/entities/user'
+import { Button, Input, Label } from '@/shared'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Building2, Globe, Plus, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { companyProfileSchema, type CompanyProfileValues } from '../model'
+import { EmployerOpportunityList } from './EmployerOpportunityList'
 import { EmployerUpdateAvatar } from './EmployerUpdateAvatar'
 import { EmployerVerificationWidget } from './EmployerVerificationWidget'
-import { OpportunityCard } from './OpportunityCard'
 
 export const EmployerDashboardPage = () => {
   const navigate = useNavigate()
-  const userAvatarURL = useUserStore((state) => state.user?.avatar_url)
+  const user = useUserStore((s) => s.user) as IUserMeEmployerResponse
   const logout = useUserStore((s) => s.logout)
+  const deleteUserAccount = useUserStore((s) => s.deleteUserMe)
+  const updateUserMe = useUserStore((s) => s.updateUserMe)
+  const opportunitiesEmployer = useOpportunityStore((s) => s.opportunitiesEmployer)
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  console.log('website url', user.website_url)
 
   const {
     register,
@@ -22,8 +28,21 @@ export const EmployerDashboardPage = () => {
     formState: { errors },
   } = useForm<CompanyProfileValues>({
     resolver: zodResolver(companyProfileSchema),
-    defaultValues: { name: '', website: '' },
+    defaultValues: {
+      company_name: user.company_name || '',
+      website_url: user.website_url || '',
+    },
   })
+
+  const onSubmit = (data: Pick<IUserMeEmployerResponse, 'website_url' | 'company_name'>) => {
+    const updatedData = {
+      ...user,
+      company_name: data.company_name,
+      website_url: data.website_url,
+    }
+
+    updateUserMe(updatedData)
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10">
@@ -60,7 +79,9 @@ export const EmployerDashboardPage = () => {
 
               <div className="group relative flex flex-col items-center">
                 <div className="relative h-32 w-32 overflow-hidden rounded-[2.5rem] bg-slate-100 border-4 border-white shadow-xl">
-                  <img src={userAvatarURL} alt="Logo" className="h-full w-full object-cover" />
+                  {user.avatar_url && (
+                    <img src={user.avatar_url} alt="Logo" className="h-full w-full object-cover" />
+                  )}
 
                   <Button
                     className="absolute inset-0 block w-full h-full cursor-pointer"
@@ -78,47 +99,58 @@ export const EmployerDashboardPage = () => {
                 </div>
               </div>
 
-              <form
-                onSubmit={handleSubmit((d) => {
-                  console.log(d)
-                })}
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">
                       Название
-                    </label>
-                    <Input {...register('name')} className="rounded-xl h-12 mb-2" />
-                    {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                    </Label>
+                    <Input
+                      disabled={!!user.company_name}
+                      {...register('company_name')}
+                      className="rounded-xl h-12 mb-2"
+                      placeholder="Введите название компании"
+                    />
+                    {errors.company_name && (
+                      <p className="text-red-500 text-sm">{errors.company_name.message}</p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">
+                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">
                       Сайт
-                    </label>
+                    </Label>
                     <div className="relative">
                       <Globe
                         className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                         size={16}
                       />
-                      <Input {...register('website')} className="pl-11 rounded-xl h-12 mb-2" />
+                      <Input
+                        disabled={!!user.website_url}
+                        {...register('website_url')}
+                        className="pl-11 rounded-xl h-12 mb-2"
+                        placeholder="example.com"
+                      />
                     </div>
-                    {errors.website && (
-                      <p className="text-red-500 text-sm">{errors.website.message}</p>
+                    {errors.website_url && (
+                      <p className="text-red-500 text-sm">{errors.website_url.message}</p>
                     )}
                   </div>
-                  <Button
-                    variant="secondary"
-                    className="w-full h-12 rounded-xl font-bold bg-slate-100 text-slate-900 hover:bg-slate-200"
-                  >
-                    Сохранить изменения
-                  </Button>
+
+                  {(!user.company_name || !user.website_url) && (
+                    <Button
+                      variant="secondary"
+                      className="w-full h-12 rounded-xl font-bold bg-slate-100 text-slate-900 hover:bg-slate-200"
+                      type="submit"
+                    >
+                      Сохранить изменения
+                    </Button>
+                  )}
                 </div>
               </form>
               <Button
                 variant="default"
-                className="text-white w-full h-12 rounded-xl font-bold bg-red-500  hover:bg-red-600"
+                className="text-white w-full h-12 rounded-xl font-bold bg-red-500  hover:bg-red-600 mt-5!"
                 onClick={() => {
                   logout()
                   navigate('/')
@@ -130,6 +162,11 @@ export const EmployerDashboardPage = () => {
               <Button
                 variant="default"
                 className="text-white w-full h-12 rounded-xl font-bold bg-red-500  hover:bg-red-600"
+                onClick={() => {
+                  deleteUserAccount()
+                  logout()
+                  navigate('/')
+                }}
               >
                 Удалить аккаунт
               </Button>
@@ -146,34 +183,11 @@ export const EmployerDashboardPage = () => {
                   <p className="text-slate-500 font-medium">Активные предложения</p>
                 </div>
                 <p className="bg-blue-50 text-blue-600 border-none font-bold p-2 rounded-sm">
-                  Всего: 3
+                  Всего: {opportunitiesEmployer.length}
                 </p>
               </div>
 
-              <div className="p-4 space-y-4">
-                {[
-                  {
-                    title: 'Junior Java Developer',
-                    applications: 12,
-                    posted: '2 дня назад',
-                    status: 'Active',
-                  },
-                  {
-                    title: 'Frontend Internship',
-                    applications: 45,
-                    posted: '1 неделю назад',
-                    status: 'Active',
-                  },
-                  {
-                    title: 'Data Analyst',
-                    applications: 89,
-                    posted: '1 месяц назад',
-                    status: 'Closed',
-                  },
-                ].map((job, i) => (
-                  <OpportunityCard key={i} {...job} />
-                ))}
-              </div>
+              <EmployerOpportunityList />
             </div>
           </main>
         </div>

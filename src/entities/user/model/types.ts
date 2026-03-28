@@ -1,6 +1,9 @@
 export type UserRole = 'employer' | 'applicant' | 'curator'
 
-export type IUserMeResponse = IUserMeEmployerResponse | IUserMeApplicantResponse
+export type IUserMeResponse =
+  | IUserMeEmployerResponse
+  | IUserMeApplicantResponse
+  | IUserMeCuratorResponse
 
 export interface ITokens {
   access_token: string
@@ -38,6 +41,10 @@ export interface IUserMeEmployerResponse extends IBaseUserResponse {
   updated_at: string
 }
 
+export interface IUserMeCuratorResponse extends IBaseUserResponse {
+  role: 'curator'
+}
+
 export interface IUserMeApplicantResponse extends IBaseUserResponse {
   role: 'applicant'
   university: string
@@ -49,17 +56,37 @@ export interface IUserMeApplicantResponse extends IBaseUserResponse {
   updated_at: string
 }
 
+export interface INetworkRequest {
+  id: string
+  sender_id: string
+  receiver_id: string
+  status: 'pending' | 'accepted' | 'rejected'
+  sender_name?: string
+}
+
 export interface IUserStore {
   user: IUserMeResponse | null
   isLoading: boolean
+  token: string | null
+  contacts: IUserMeApplicantResponse[]
+  pendingRequests: IUserMeApplicantResponse[]
+
+  getContacts: () => Promise<void>
+  sendRequest: (receiverId: string) => Promise<void>
+  handleRequest: (requestId: string, status: 'accepted' | 'rejected') => Promise<void>
+  searchApplicants: (q: string) => Promise<IUserMeApplicantResponse[]>
   createNewUser: (userData: IRegisterRequest) => Promise<void>
   loginUser: (userData: ILoginRequest) => Promise<void>
   getUserMe: () => Promise<void>
   setTokens: (access_token: string, refresh_token: string) => void
   logout: () => void
-  updateUserMe: (userData: Omit<IUserMeResponse, 'role' | 'id'>) => Promise<void>
+  updateUserMe: (
+    userData:
+      | Omit<IUserMeEmployerResponse, 'id' | 'role' | 'updated_at'>
+      | Omit<IUserMeApplicantResponse, 'id' | 'role' | 'updated_at'>,
+  ) => Promise<void>
   deleteUserMe: () => Promise<void>
-  verifyEmployerMe: (inn: string) => Promise<void>
+  verifyEmployerMe: (inn: string, companyName: string) => Promise<void>
   updateIsPrivateUserMe: (isPrivate: boolean) => Promise<void>
   updateAvatarUserMe: (avatarUrl: string) => Promise<void>
 }

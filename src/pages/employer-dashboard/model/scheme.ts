@@ -8,9 +8,8 @@ export const companyVerificationSchema = z.object({
 })
 
 export const companyProfileSchema = z.object({
-  name: z.string().min(2, 'Название слишком короткое'),
-  description: z.string().min(20, 'Опишите компанию подробнее'),
-  website: z.string().url('Введите корректный URL'),
+  company_name: z.string().min(2, 'Название слишком короткое'),
+  website_url: z.string().url('Введите корректный URL'),
 })
 
 export type CompanyVerificationValues = z.infer<typeof companyVerificationSchema>
