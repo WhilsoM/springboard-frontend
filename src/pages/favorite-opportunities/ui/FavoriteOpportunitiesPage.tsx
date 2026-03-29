@@ -78,12 +78,6 @@ export const FavoriteOpportunitiesPage = () => {
             <p className="text-slate-400 font-medium mt-2 mb-6">
               Вы еще не добавили ни одной вакансии в избранное
             </p>
-            <Button
-              onClick={() => navigate('/opportunities')}
-              className="rounded-xl bg-slate-900 px-8 hover:bg-blue-600 transition-all"
-            >
-              Найти работу
-            </Button>
           </div>
         )}
       </div>
