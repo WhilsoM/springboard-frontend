@@ -25,7 +25,7 @@ export const FavoriteOpportunitiesPage = () => {
             </h1>
           </div>
           <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 font-bold text-slate-500">
-            Всего: {favorites.length}
+            Всего: {favorites?.length}
           </div>
         </div>
 

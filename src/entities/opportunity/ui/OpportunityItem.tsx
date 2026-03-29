@@ -1,10 +1,23 @@
+import { useUserStore } from '@/entities/user'
 import { AddToFavorite } from '@/features/favorites'
 import { Button } from '@/shared'
 import { Building2, ChevronRight } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import type { IOpportunity } from '../model'
 
 export const OpportunityItem = memo(({ job }: { job: IOpportunity }) => {
+  const apply = useUserStore((s) => s.apply)
+  const [applied, setApplied] = useState(false)
+
+  const handleApply = async () => {
+    if (window.confirm(`Откликнуться на вакансию ${job.title}?`)) {
+      const success = await apply(job.id)
+      if (success) {
+        setApplied(true)
+        alert('Отклик успешно отправлен!')
+      }
+    }
+  }
   return (
     <div
       key={job.id}
@@ -43,11 +56,12 @@ export const OpportunityItem = memo(({ job }: { job: IOpportunity }) => {
           {job.salary_min}&#8381; - {job.salary_max}&#8381;
         </p>
         <Button
+          onClick={handleApply}
+          disabled={applied}
           variant="ghost"
-          size="sm"
-          className="text-blue-600 hover:bg-blue-100 hover:text-blue-700 p-0 h-auto gap-1"
+          className={applied ? 'text-green-600' : 'text-blue-600'}
         >
-          Откликнуться <ChevronRight className="h-4 w-4" />
+          {applied ? 'Вы откликнулись' : 'Откликнуться'} <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

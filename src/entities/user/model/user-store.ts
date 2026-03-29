@@ -1,21 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {
+  applyToOpportunityAction,
   createNewUserAction,
   deleteUserMeAction,
   getContactsAction,
+  getOpportunityApplicationsAction,
   getUserMeAction,
   handleRequestAction,
   loginAction,
   logoutAction,
   searchApplicantsAction,
   sendRequestAction,
+  updateApplicationStatusAction,
   updateAvatarUserMeAction,
   updateIsPrivateUserMeAction,
   updateUserMeAction,
   verifyEmployerMeAction,
 } from './actions'
 import type { IUserMeApplicantResponse, IUserMeResponse, IUserStore } from './types'
+
 export const useUserStore = create<IUserStore>()(
   persist(
     () => ({
@@ -24,7 +29,12 @@ export const useUserStore = create<IUserStore>()(
       token: null as string | null,
       contacts: [] as IUserMeApplicantResponse[],
       pendingRequests: [] as IUserMeApplicantResponse[],
+      applications: [] as any[],
+      isAppsLoading: false as boolean,
 
+      apply: applyToOpportunityAction,
+      getOppApplications: getOpportunityApplicationsAction,
+      updateStatus: updateApplicationStatusAction,
       getContacts: getContactsAction,
       sendRequest: sendRequestAction,
       handleRequest: handleRequestAction,

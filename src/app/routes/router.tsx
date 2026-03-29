@@ -52,6 +52,12 @@ const OpportunityDetailedPage = lazy(() =>
   })),
 )
 
+const OpportunityApplicationsPage = lazy(() =>
+  import('@/pages/employer-dashboard/ui/OpportunityApplicationsPage').then((module) => ({
+    default: module.OpportunityApplicationsPage,
+  })),
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -72,11 +78,6 @@ export const router = createBrowserRouter([
       {
         path: 'applicants',
         element: <FindApplicantsPage />,
-      },
-      {
-        path: 'applicants/:id',
-        // todo: add applicant detailed page
-        // element: <FindApplicantsPage />,
       },
     ],
   },
@@ -101,6 +102,10 @@ export const router = createBrowserRouter([
                   {
                     path: 'edit/:id',
                     element: <EmployerUpdateOpportunityById />,
+                  },
+                  {
+                    path: 'opportunities/:id/applications',
+                    element: <OpportunityApplicationsPage />,
                   },
                 ],
               },

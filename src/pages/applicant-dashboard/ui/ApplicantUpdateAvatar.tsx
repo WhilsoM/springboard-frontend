@@ -28,6 +28,7 @@ export const ApplicantUpdateAvatar = ({
 
     try {
       await updateUserAvatar(avatarURL)
+      setIsDialogOpen(false)
     } catch (error) {
       console.error('Ошибка при обновлении аватара:', error)
     } finally {

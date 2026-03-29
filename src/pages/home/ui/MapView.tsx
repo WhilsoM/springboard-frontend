@@ -72,7 +72,7 @@ export const MapView = () => {
                             {tag}
                           </span>
                         ))}
-                        {job.tags.length > 3 && (
+                        {job.tags?.length > 3 && (
                           <span className="text-[10px] text-slate-400">+{job.tags.length - 3}</span>
                         )}
                       </div>

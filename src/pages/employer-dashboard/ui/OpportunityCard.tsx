@@ -22,6 +22,13 @@ export const OpportunityCard = ({ id, title, status, posted }: OpportunityCardPr
         </div>
       </div>
 
+      <Link
+        to={`/dashboard/employer/opportunities/${id}/applications`}
+        className="px-3 py-1 text-xs font-semibold bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+      >
+        Смотреть отклики
+      </Link>
+
       <div className="flex items-center gap-2">
         <Link
           to={`edit/${id}`}

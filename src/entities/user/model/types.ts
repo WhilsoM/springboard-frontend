@@ -70,7 +70,13 @@ export interface IUserStore {
   token: string | null
   contacts: IUserMeApplicantResponse[]
   pendingRequests: IUserMeApplicantResponse[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  applications: any[]
+  isAppsLoading: boolean
 
+  apply: (oppId: string) => Promise<void>
+  getOppApplications: (oppId: string) => Promise<void>
+  updateStatus: (appId: string, status: 'accepted' | 'rejected') => Promise<void>
   getContacts: () => Promise<void>
   sendRequest: (receiverId: string) => Promise<void>
   handleRequest: (requestId: string, status: 'accepted' | 'rejected') => Promise<void>

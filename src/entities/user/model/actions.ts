@@ -42,13 +42,21 @@ export const createNewUserAction = async (userData: IRegisterRequest) => {
 }
 
 export const getUserMeAction = async () => {
-  useUserStore.setState({ isLoading: true })
+  const store = useUserStore.getState()
+
+  if (!store.user) {
+    useUserStore.setState({ isLoading: true })
+  }
+
   try {
     const { data } = await userApi.getUserMe()
     useUserStore.setState({ user: data })
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error('Failed to fetch user data:', error)
-    useUserStore.setState({ user: null })
+    if (error?.response?.status === 401) {
+      useUserStore.setState({ user: null })
+    }
   } finally {
     useUserStore.setState({ isLoading: false })
   }
@@ -60,19 +68,16 @@ export const updateUserMeAction = async (
     | Omit<IUserMeApplicantResponse, 'id' | 'role' | 'updated_at'>,
 ) => {
   const store = useUserStore.getState()
-  useUserStore.setState({ isLoading: true })
-  console.log('updateUserMeAction', userData)
 
   try {
     const { data } = await userApi.updateUserMe(userData)
     useUserStore.setState({
       user: store.user ? { ...store.user, ...data } : data,
     })
-    console.log('FROM BACKEND', data)
+    await store.getUserMe()
   } catch (error) {
     console.error('Failed to update user data:', error)
-  } finally {
-    useUserStore.setState({ isLoading: false })
+    throw error
   }
 }
 
@@ -109,20 +114,20 @@ export const verifyEmployerMeAction = async (inn: string, companyName: string) =
 export const updateIsPrivateUserMeAction = async (isPrivate: boolean) => {
   const store = useUserStore.getState()
 
-  useUserStore.setState({ isLoading: true })
   try {
     await userApi.updateIsPrivateUserMe(isPrivate)
-    await store.getUserMe()
+    if (store.user) {
+      useUserStore.setState({
+        user: { ...store.user, is_private: isPrivate },
+      })
+    }
   } catch (error) {
     console.error('Failed to update user privacy:', error)
-  } finally {
-    useUserStore.setState({ isLoading: false })
   }
 }
 
 export const updateAvatarUserMeAction = async (avatarUrl: string) => {
   const store = useUserStore.getState()
-  useUserStore.setState({ isLoading: true })
 
   if (store.user?.role === 'curator') return
 
@@ -135,8 +140,6 @@ export const updateAvatarUserMeAction = async (avatarUrl: string) => {
     }
   } catch (error) {
     console.error('Failed to update user avatar:', error)
-  } finally {
-    useUserStore.setState({ isLoading: false })
   }
 }
 
@@ -178,5 +181,50 @@ export const searchApplicantsAction = async (q: string) => {
   } catch (e) {
     console.error('Search failed', e)
     return []
+  }
+}
+
+export const applyToOpportunityAction = async (oppId: string) => {
+  useUserStore.setState({ isLoading: true })
+
+  try {
+    await userApi.apply(oppId)
+  } catch (error) {
+    console.error('Failed to apply:', error)
+  } finally {
+    useUserStore.setState({ isLoading: false })
+  }
+}
+
+export const getOpportunityApplicationsAction = async (oppId: string) => {
+  useUserStore.setState({ isAppsLoading: true })
+
+  try {
+    const { data } = await userApi.getApplicantsForOpp(oppId)
+    useUserStore.setState({ applications: data.applications })
+  } catch (error) {
+    console.error('Failed to fetch applications:', error)
+  } finally {
+    useUserStore.setState({ isAppsLoading: false })
+  }
+}
+
+export const updateApplicationStatusAction = async (
+  appId: string,
+  status: 'accepted' | 'rejected',
+) => {
+  useUserStore.setState({ isLoading: true })
+
+  try {
+    await userApi.updateStatus(appId, status)
+
+    const currentApps = useUserStore.getState().applications
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatedApps = currentApps.map((app: any) => (app.id === appId ? { ...app, status } : app))
+    useUserStore.setState({ applications: updatedApps })
+  } catch (error) {
+    console.error('Failed to update status:', error)
+  } finally {
+    useUserStore.setState({ isLoading: false })
   }
 }

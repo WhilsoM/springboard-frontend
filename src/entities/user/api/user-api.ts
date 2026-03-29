@@ -47,4 +47,10 @@ export const userApi = {
     }),
 
   deleteOpportunity: (id: string) => apiInstance.delete(`/admin/opportunities/${id}`),
+
+  apply: (oppId: string) => apiInstance.post(`/opportunities/${oppId}/apply`),
+  getApplicantsForOpp: (oppId: string) =>
+    apiInstance.get(`/employer/opportunities/${oppId}/applications`),
+  updateStatus: (appId: string, status: 'accepted' | 'rejected') =>
+    apiInstance.patch(`/employer/applications/${appId}/status`, { status }),
 }

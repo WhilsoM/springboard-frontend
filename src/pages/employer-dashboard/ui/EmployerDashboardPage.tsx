@@ -183,7 +183,7 @@ export const EmployerDashboardPage = () => {
                   <p className="text-slate-500 font-medium">Активные предложения</p>
                 </div>
                 <p className="bg-blue-50 text-blue-600 border-none font-bold p-2 rounded-sm">
-                  Всего: {opportunitiesEmployer.length}
+                  Всего: {opportunitiesEmployer?.length}
                 </p>
               </div>
 
