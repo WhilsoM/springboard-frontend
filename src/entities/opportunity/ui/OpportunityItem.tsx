@@ -11,11 +11,9 @@ export const OpportunityItem = memo(({ job }: { job: IOpportunity }) => {
 
   const handleApply = async () => {
     if (window.confirm(`Откликнуться на вакансию ${job.title}?`)) {
-      const success = await apply(job.id)
-      if (success) {
-        setApplied(true)
-        alert('Отклик успешно отправлен!')
-      }
+      await apply(job.id)
+      setApplied(true)
+      alert('Отклик успешно отправлен!')
     }
   }
   return (
