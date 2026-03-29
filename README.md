@@ -47,3 +47,10 @@
 ```bash
 bun i && bun dev
 ```
+
+или через docker:
+
+```bash
+docker build -t frontend .
+docker run -d -p 80:80 --name frontend-app frontend
+```

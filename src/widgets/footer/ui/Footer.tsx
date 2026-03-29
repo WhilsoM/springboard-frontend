@@ -1,4 +1,4 @@
-import { Github, Globe, GraduationCap, Instagram, Linkedin } from 'lucide-react'
+import { Github, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router'
 
 export const Footer = () => {
@@ -19,90 +19,14 @@ export const Footer = () => {
               компаниями России. Начните свою карьеру в сфере ИТ уже сегодня.
             </p>
             <div className="flex items-center gap-4 pt-2">
-              <a
-                href="#"
-                className="text-slate-500 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-800"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
+              <Link
+                to="https://github.com/WhilsoM/springboard-frontend"
                 className="text-slate-500 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-800"
                 aria-label="GitHub"
               >
                 <Github className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-slate-500 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-800"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
+              </Link>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider text-white uppercase">Product</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  For Students
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  For Employers
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Success Stories
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider text-white uppercase">Company</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Press Kit
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-            </ul>
           </div>
         </div>
 
@@ -116,10 +40,6 @@ export const Footer = () => {
             <Link to="/" className="text-sm text-slate-500 hover:text-white transition-colors">
               Правила сервиса
             </Link>
-            <div className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer hover:text-white transition-colors ml-4 md:ml-0">
-              <Globe className="h-4 w-4" />
-              <span>Русский (РУ)</span>
-            </div>
           </div>
         </div>
       </div>
